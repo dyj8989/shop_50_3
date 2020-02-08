@@ -1,6 +1,8 @@
 .DS_Store
 node_modules
 /dist
+# 测试: 新建 demo 文件夹 ( 配置忽视文件 )
+demo
 
 # local env files
 .env.local
