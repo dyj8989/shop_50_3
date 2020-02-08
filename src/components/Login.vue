@@ -74,9 +74,11 @@ export default {
         }).then(res => {
           // console.log(res)
           // res.data是服务端返回的数据
-          const { meta } = res.data
+          const { meta, data } = res.data
           if (meta.status === 200) {
-            console.log(res.data.meta.msg)
+            // console.log(res.data.meta.msg)
+            // 一登录成功，就存储token令牌到本地
+            localStorage.setItem('token', data.token)
             // 1.默认的普通提示
             // this.$message(meta.msg)
             // 2.配置一个对象
@@ -85,7 +87,7 @@ export default {
               message: meta.msg,
               duration: 1000
             })
-            // this.$router.push('/index')
+            this.$router.push('/index')
             // 路由 name 的使用:  路由路径有时比较长, 其实可以起名字来跳转
             // this.$router.push({ name: 'index' })
           } else {
