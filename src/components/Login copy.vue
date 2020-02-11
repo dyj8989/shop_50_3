@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <el-form :model="form" label-width="80px" status-icon :rules="rules" ref="form" @keyup.enter.native="login">
+    <el-form :model="form" label-width="80px" status-icon :rules="rules" ref="form">
       <img src="../assets/表情包/微信图片_20190708214449.gif" alt="头像" class="logoImg" />
       <el-form-item label="用户名" prop="username">
         <el-input placeholder="请输入用户名" v-model="form.username"></el-input>
@@ -55,28 +55,52 @@ export default {
     resetForm () {
       this.$refs.form.resetFields()
     },
-    async login () {
-      try {
-        // 先校验，再发送ajax请求
-        await this.$refs.form.validate()
-        console.log('成功了')
-        const { meta, data } = await this.$axios.post('login', this.form)
-        if (meta.status === 200) {
-          // console.log(meta.msg)
-          // 一登录成功，就存储token令牌到本地
-          localStorage.setItem('token', data.token)
-          this.$message({
-            message: meta.msg,
-            type: 'success'
-          })
-          this.$router.push({ name: 'index' })
-        } else {
-          // console.log(meta.msg)
-          this.$message.error(meta.msg)
-        }
-      } catch (e) {
-        console.log(e)
-      }
+    login () {
+      // 先校验，再发送ajax请求
+      // 拿到form表单组件，调用组件的校验方法
+      // 参数1：是否校验成功boolean值
+      // 参数2：是一个对象，包含了错误的校验字段（没用，会自动显示错误信息）
+
+      this.$refs.form.validate((isValid, obj) => {
+        // isValid 是否通过校验 obj 未通过校验的信息
+        console.log(isValid, obj)
+        if (!isValid) return
+        // 通过校验该发ajax请求了
+        console.log('发ajax')
+        this.$axios({
+          method: 'post',
+          url: 'login',
+          data: this.form
+        }).then(res => {
+          // console.log(res)
+          // res.data是服务端返回的数据
+          const { meta, data } = res
+          if (meta.status === 200) {
+            // console.log(res.data.meta.msg)
+            // 一登录成功，就存储token令牌到本地
+            localStorage.setItem('token', data.token)
+            // 1.默认的普通提示
+            // this.$message(meta.msg)
+            // 2.配置一个对象
+            this.$message({
+              type: 'success',
+              message: meta.msg,
+              duration: 1000
+            })
+            this.$router.push('/index')
+            // 路由 name 的使用:  路由路径有时比较长, 其实可以起名字来跳转
+            // this.$router.push({ name: 'index' })
+          } else {
+            // 3.直接调方法的同时，指定提示的类型
+            this.$message.error('失败了')
+          }
+        })
+        // axios.post(url,data).then(..).catch(..)
+        // this.$axios.post('login', this.form).then(res => {
+        //   const { meta, data } = res
+        //   console.log(meta, data)
+        // })
+      })
     }
   }
 }

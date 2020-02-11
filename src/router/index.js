@@ -2,6 +2,9 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '../components/Login.vue'
 import Index from '../components/Index.vue'
+import Users from '../components/Users.vue'
+import Roles from '../components/Roles.vue'
+import Rights from '../components/Rights.vue'
 
 Vue.use(VueRouter)
 
@@ -15,7 +18,12 @@ const routes = [
   },
   { path: '/index',
     name: 'index',
-    component: Index }
+    component: Index,
+    children: [
+      { path: '/users', name: 'users', component: Users },
+      { path: '/roles', name: 'roles', component: Roles },
+      { path: '/rights', name: 'rights', component: Rights }
+    ] }
 ]
 
 const router = new VueRouter({
@@ -30,7 +38,7 @@ const router = new VueRouter({
 // 如果已经登录过了, 有token, 不需要拦截
 // 如果不是去登陆, 且没有 token, 拦截到登录页
 router.beforeEach((to, from, next) => {
-  console.log(to)
+  // console.log(to)
   const token = localStorage.getItem('token')
   if (to.path === '/login' || token) {
     next()

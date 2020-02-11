@@ -70,27 +70,26 @@
 <script>
 export default {
   methods: {
-    async logout () {
-      try {
-        // this.confirm
+    logout () {
+      // this.confirm
       // 参数1：提示信息
       // 参数2：标题
       // 参数3：配置对象
-        await this.$confirm('亲，你确定要退出系统吗？', '温馨提示', {
-          type: 'warning'
+      this.$confirm('亲，你确定要退出系统吗？', '温馨提示', {
+        type: 'warning'
+      })
+        .then(() => {
+          // 确认提示
+          this.$message.success('退出成功')
+          // 从本地清除 token
+          localStorage.removeItem('token')
+          // 跳转登录路由
+          this.$router.push('/login')
         })
-        console.log('成功了')
-        // 确认提示
-        this.$message.success('退出成功')
-        // 从本地清除 token
-        localStorage.removeItem('token')
-        // 跳转登录路由
-        this.$router.push('/login')
-      } catch (e) {
-        // 取消
-        this.$message('取消退出')
-        console.log(e)
-      }
+        .catch(() => {
+          // 取消
+          this.$message('取消退出')
+        })
     }
   }
 }
