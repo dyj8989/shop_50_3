@@ -250,10 +250,9 @@ export default {
           }
           // 重新渲染当前页
           this.getUserList()
-        } else {
-          this.$message.error(meta.msg)
         }
       } catch (e) {
+        this.$message('取消删除')
         console.log(e)
       }
     },
