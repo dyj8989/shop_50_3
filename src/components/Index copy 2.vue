@@ -27,17 +27,34 @@
           background-color="#545c64"
           text-color="#fff"
           active-text-color="#ffd04b"
-          :default-active="defaultActive"
         >
-          <el-submenu :index="menu.path" v-for="menu in menuList" :key="menu.id">
+          <el-submenu index="1">
             <!-- 标题 -->
             <template v-slot:title>
               <i class="el-icon-location"></i>
-              <span>{{menu.authName}}</span>
+              <span>用户管理</span>
             </template>
-            <el-menu-item :index="item.path" v-for="item in menu.children" :key="item.id">
+            <!-- 解析时，会将配置的路劲，当成绝对路径使用，写的是users=>/users -->
+            <el-menu-item index="users">
               <i class="el-icon-menu"></i>
-              <span slot="title">{{item.authName}}</span>
+              <span slot="title">用户列表</span>
+            </el-menu-item>
+          </el-submenu>
+
+          <el-submenu index="2">
+            <!-- 标题 -->
+            <template v-slot:title>
+              <i class="el-icon-location"></i>
+              <span>权限管理</span>
+            </template>
+
+            <el-menu-item index="roles">
+              <i class="el-icon-menu"></i>
+              <span slot="title">角色列表</span>
+            </el-menu-item>
+            <el-menu-item index="rights">
+              <i class="el-icon-menu"></i>
+              <span slot="title">权限列表</span>
             </el-menu-item>
           </el-submenu>
         </el-menu>
@@ -65,9 +82,9 @@ export default {
     async logout () {
       try {
         // this.confirm
-        // 参数1：提示信息
-        // 参数2：标题
-        // 参数3：配置对象
+      // 参数1：提示信息
+      // 参数2：标题
+      // 参数3：配置对象
         await this.$confirm('亲，你确定要退出系统吗？', '温馨提示', {
           type: 'warning'
         })
@@ -87,19 +104,12 @@ export default {
     // 获取菜单列表
     async getMenus () {
       const { meta, data } = await this.$axios.get('menus')
-      // console.log(meta, data)
+      console.log(meta, data)
       if (meta.status === 200) {
         this.menuList = data
       } else {
         this.$message.error(meta.msg)
       }
-    }
-  },
-  computed: {
-    // 高亮属性:default-active 根据地址动态变化(this.$route.path)
-    defaultActive () {
-      // console.log(this.$route.path.slice(1))
-      return this.$route.path.slice(1)
     }
   }
 }

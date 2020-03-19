@@ -110,6 +110,7 @@
     </el-dialog>
 
     <!-- 添加分配权限对话框 -->
+    <!--  -->
     <el-dialog title="分配权限" :visible.sync="assignRolesVisible" width="40%">
       <el-tree
         ref="tree"
@@ -189,7 +190,9 @@ export default {
     async delRight (row, rightId) {
       console.log(row, rightId)
       try {
-        const { data, meta } = await this.$axios.delete(`roles/${row.id}/rights/${rightId}`)
+        const { data, meta } = await this.$axios.delete(
+          `roles/${row.id}/rights/${rightId}`
+        )
         // console.log(data,meta)
         if (meta.status === 200) {
           this.$message.success(meta.msg)
@@ -277,13 +280,19 @@ export default {
         const { data, meta } = await this.$axios.get('rights/tree')
         // console.log(data, meta)
         if (meta.status === 200) {
-          // 请求成功
+          // 进行数据展示
           this.data = data
-          // 设置选中的,三级权限
+          // 设置选中时,如果设置一级，所有的二级三级都会被全选(不一定)
+          // 应该设置三级,如果真的所有的三级都被选中了,对应的二级和一级会自动选中
+          // this.$refs.tree.setCheckedKeys([101])
+          // 获取所有的三级权限的id,用于设置
           const arr = []
           row.children.forEach(l1 => {
+            // 拿到一级
             l1.children.forEach(l2 => {
+              // 拿到二级
               l2.children.forEach(l3 => {
+                // 拿到三级
                 arr.push(l3.id)
               })
             })
@@ -298,6 +307,10 @@ export default {
     async assignRight () {
       try {
         // 获取选中的权限id(全选中的 和半选中的)
+        // 只能获取到全部选中的 id,  勾选中的 id
+        // console.log(this.$refs.tree.getCheckedKeys())
+        // 还需要获取半选中的 id
+        // console.log(this.$refs.tree.getHalfCheckedKeys())
         const ids = this.$refs.tree.getCheckedKeys()
         const halfs = this.$refs.tree.getHalfCheckedKeys()
         const rids = [...ids, ...halfs].join(',')
